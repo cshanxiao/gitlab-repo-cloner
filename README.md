@@ -30,6 +30,8 @@ Start Installation
 
 #Usage
 
+Use a ssh key without key passphrase(passcode) before start.
+
 It is very simple to use. You just need to pass the group name (or id) as an argument to the `gital`
 
     gital my-group
