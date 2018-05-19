@@ -3,3 +3,6 @@ build/
 dist/
 gital.egg-info/
 *.pyc
+/.project
+/.pydevproject
+/.settings

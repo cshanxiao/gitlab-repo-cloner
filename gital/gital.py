@@ -7,9 +7,9 @@ import os
 import requests
 import git
 import argparse
+import traceback
 from colorama import init as color_init, Fore, Style
-from . import __version__
-from .config import URL, POSTFIX, PRIVATE_TOKEN
+from config import URL, POSTFIX, PRIVATE_TOKEN
 from requests import exceptions as rest_exceptions
 
 # Color definitions
@@ -22,7 +22,8 @@ RESET = Style.RESET_ALL
 ERROR = RED + "Error: " + RESET
 LINE = "======================================="
 
-API_TIMEOUT = 10
+API_TIMEOUT = 15
+
 
 def _getCurrentFolder():
     """Returns list of the folders of the current working directory"""
@@ -33,6 +34,7 @@ def _getCurrentFolder():
 
 def _fetchRemotes(remotes):
     """Fetch a list of remotes, displaying progress info along the way."""
+
     def _get_name(ref):
         """Return the local name of a remote or tag reference."""
         return ref.remote_head if isinstance(ref, git.RemoteReference) else ref.name
@@ -165,24 +167,25 @@ def _cloneRepos(group, projects, currentFolder, update):
     print('')
 
     for project in projects:
-
-        repoPath = os.path.join(currentFolder, group, project['path'])
-
-        print(BLUE + "Path: " + repoPath)
-        if not os.path.exists(repoPath):
-            print(GREEN + project['name'] + RESET + ' is cloning.')
-            repo = git.Repo.clone_from(project['ssh_url_to_repo'], repoPath, branch='master')
-            print(GREEN + project['name'] + RESET + ' clone process is completed.')
-        else:
-            if not update:
-                print(BLUE + project['name'] + RESET + ' is already exists. Skipping this repository.')
+        try:
+            repoPath = os.path.join(currentFolder, group, project['path'])
+    
+            print(BLUE + "Path: " + repoPath)
+            if not os.path.exists(repoPath):
+                print(GREEN + project['name'] + RESET + ' is cloning.')
+                repo = git.Repo.clone_from(project['ssh_url_to_repo'], repoPath, branch='master')
+                print(GREEN + project['name'] + RESET + ' clone process is completed.')
             else:
-                print(BLUE + project['name'] + RESET + ' is already exists.' + GREEN + ' Updating the repo.')
-                _updateExistingRepo(repoPath)
-
-        print(LINE+LINE)
-        print(" ")
-
+                if not update:
+                    print(BLUE + project['name'] + RESET + ' is already exists. Skipping this repository.')
+                else:
+                    print(BLUE + project['name'] + RESET + ' is already exists.' + GREEN + ' Updating the repo.')
+                    _updateExistingRepo(repoPath)
+    
+            print(LINE + LINE)
+            print(" ")
+        except:
+            traceback.print_exc()
 
 
 def _getProjectsOfGroup(group=None):
@@ -261,7 +264,6 @@ def main():
         print(LINE)
         print('')
 
-
     projects = _getProjectsOfGroup(args.group)
 
     if not projects:
@@ -279,5 +281,12 @@ def run():
     """
     try:
         main()
+        print("Clone finished!")
     except KeyboardInterrupt:
         print('Interrupted.')
+    except:
+        traceback.print_exc()
+
+
+if __name__ == "__main__":
+    run()
