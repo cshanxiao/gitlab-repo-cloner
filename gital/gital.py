@@ -169,7 +169,7 @@ def _cloneRepos(group, projects, currentFolder, update):
     for project in projects:
         try:
             repoPath = os.path.join(currentFolder, group, project['path'])
-    
+
             print(BLUE + "Path: " + repoPath)
             if not os.path.exists(repoPath):
                 print(GREEN + project['name'] + RESET + ' is cloning.')
@@ -181,7 +181,7 @@ def _cloneRepos(group, projects, currentFolder, update):
                 else:
                     print(BLUE + project['name'] + RESET + ' is already exists.' + GREEN + ' Updating the repo.')
                     _updateExistingRepo(repoPath)
-    
+
             print(LINE + LINE)
             print(" ")
         except:
@@ -231,7 +231,6 @@ def _getProjectsOfGroup(group=None):
 
 
 def main():
-
     color_init(autoreset=True)
 
     if not URL:
@@ -247,7 +246,7 @@ def main():
         exit(1)
 
     parser = argparse.ArgumentParser(
-         description="Clone GitLab repositories at once.")
+        description="Clone GitLab repositories at once.")
 
     parser.add_argument('group', nargs='?', default=False, help='Provide project group key.')
     parser.add_argument('-u', '--update', action='store_true', default=False, help='Update the existing repositories.')
